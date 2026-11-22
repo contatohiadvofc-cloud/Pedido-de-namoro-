@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quer namorar comigo?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fundo: #ffc8dd;
+    --texto: #590d22;
+    --botao: #ffb3c1;
+    --borda: #590d22;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: 'Montserrat', system-ui, sans-serif;
+    overflow: hidden;
+  }
+  main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 24px;
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 7vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+  }
+  .botoes { display: flex; gap: 20px; align-items: center; }
+  button {
+    font: inherit;
+    font-weight: 800;
+    color: var(--texto);
+    background: var(--botao);
+    border: 3px outset var(--borda);
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    transition: transform .12s;
+  }
+  button:active { transform: scale(.96); }
+  button:focus-visible { outline: 3px solid var(--texto); outline-offset: 3px; }
+  #nao { font-size: .8rem; padding: 8px 16px; }
+  #nao.solto { position: fixed; transition: left .15s, top .15s; }
+  dialog {
+    border: 3px solid var(--borda);
+    border-radius: 12px;
+    background: var(--fundo);
+    color: var(--texto);
+    padding: 28px;
+    max-width: 90vw;
+    text-align: center;
+    font-family: inherit;
+  }
+  dialog::backdrop { background: rgba(89, 13, 34, .45); }
+  dialog h2 { margin: 0 0 8px; }
+  dialog p { margin: 0 0 20px; font-weight: 700; }
+  @media (prefers-reduced-motion: reduce) {
+    button, #nao.solto { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Quer namorar comigo?</h1>
+  <div class="botoes">
+    <button id="sim" type="button">Sim</button>
+    <button id="nao" type="button">Não</button>
+  </div>
+</main>
+
+<dialog id="resposta">
+  <h2>Nunca duvidei</h2>
+  <p>Eu te amo meu amor, lanchinho mais tarde?</p>
+  <button id="fechar" type="button">Fechar</button>
+</dialog>
+
+<script>
+  // Para mudar os textos, edite o HTML acima.
+  const nao = document.getElementById('nao');
+  const sim = document.getElementById('sim');
+  const dialogo = document.getElementById('resposta');
+  const DISTANCIA = 90; // quão perto do cursor o botão "Não" foge
+
+  function fugir() {
+    const w = nao.offsetWidth, h = nao.offsetHeight;
+    nao.classList.add('solto');
+    nao.style.left = Math.random() * (window.innerWidth - w) + 'px';
+    nao.style.top = Math.random() * (window.innerHeight - h) + 'px';
+  }
+
+  function perto(x, y) {
+    const r = nao.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    return Math.abs(x - cx) < DISTANCIA && Math.abs(y - cy) < DISTANCIA;
+  }
+
+  document.addEventListener('pointermove', e => { if (perto(e.clientX, e.clientY)) fugir(); });
+  document.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    if (perto(t.clientX, t.clientY)) { e.preventDefault(); fugir(); }
+  }, { passive: false });
+
+  nao.addEventListener('click', () => nao.remove());
+  sim.addEventListener('click', () => dialogo.showModal());
+  document.getElementById('fechar').addEventListener('click', () => dialogo.close());
+</script>
+</body>
+</html>
